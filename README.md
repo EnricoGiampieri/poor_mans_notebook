@@ -10,6 +10,20 @@ WARNING - this script is extremely in the alpha stage! it shouldn't do any damag
 3. sun the script on your file. It will generate the rst, compile in html and open it with your default browser.
 4. enjoy!
 
+##Examples
+
+PMN applied to itself. The html contains all the info and effect, and rst, while not enabled to autofold the code, it's still quite usable. 
+
+* html version: https://cdn.rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/pmn_itself/pmn.html
+* rst version: https://github.com/EnricoGiampieri/poor_mans_notebook/blob/master/examples/pmn_itself/pmn.rst
+
+A toy example of including files and image, bot png, svg and dynamic (using plot.ly).
+Due to limitation in the GitHub preview system, the svg and html are not rendered in the rst version, so check the html one
+
+* html version: https://cdn.rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/plotting_with_plotly/test_plotly.html
+
+The html is generated using http://rawgit.com/
+
 ## Rationale
 
 This package is thought as an aid to literate programming in the scientific programming world.
