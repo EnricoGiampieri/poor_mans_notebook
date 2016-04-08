@@ -10,7 +10,7 @@ Created on Fri Apr  8 11:30:07 2016
 
 can be executed with::
 
-    !python3.5 ../../pmn.py test_plotly.py
+    !python3.5 ../../pmn.py test_figures.py
 
 
 Random Data in Text Format
@@ -45,44 +45,78 @@ Or they can be included as svg
 
 .. image:: my_image.svg
 
-
-Plot.ly
--------
-
 """
 
 
-from plotly.offline import plot
-import plotly.graph_objs as go
+"""
+Bokeh
+------
 
-data = [
-    go.Scatter(
-        x=[0, 1, 2, 3, 4, 5, 6, 7, 8],
-        y=[0, 1, 2, 3, 4, 5, 6, 7, 8]
-    )
-]
-layout = go.Layout(
-    autosize=False,
-    width=500,
-    height=500,
-    margin=go.Margin(
-        l=50,
-        r=50,
-        b=100,
-        t=100,
-        pad=4
-    ),
-    paper_bgcolor='#7f7f7f',
-    plot_bgcolor='#c7c7c7'
-)
-fig = go.Figure(data=data, layout=layout)
+permette di esportare la figura direttamente come html.
+"""
 
-plot(fig, filename='./my-graph.html', auto_open=False)
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+
+plot = figure()
+x = [1, 2, 3, 4, 5]
+y = [6, 7, 2, 4, 5]
+plot.line(x, y, legend="Temp.", line_width=2)
+
+html = file_html(plot, CDN, "my plot")
+
+with open("./bokeh_plot.html", "w") as bokeh_file:
+    print(html, file=bokeh_file)
 
 """
 .. raw:: html
-   :file: ./my-graph.html
+   :file: ./bokeh_plot.html
 
+interface with matplotlib
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I can also take a matplotlib figure and convert it directly to a bokeh plot
+saving it then to an html file
+
+"""
+from bokeh.mpl import to_bokeh
+plt_fig, ax = plt.subplots()
+ax.plot(plt.randn(5), plt.randn(5))
+
+with open("./bokeh_matplotlib_plot.html", "w") as bokeh_file:
+    bokeh_fig = to_bokeh(plt_fig)
+    html = file_html(bokeh_fig, CDN, "my plot")
+    print(html, file=bokeh_file)
+
+"""
+.. raw:: html
+   :file: ./bokeh_matplotlib_plot.html
+"""
+
+from bokeh.models.widgets import Panel, Tabs
+from bokeh.io import output_file, show
+from bokeh.plotting import figure
+
+
+p1 = figure(plot_width=300, plot_height=300)
+p1.circle([1, 2, 3, 4, 5], [6, 7, 2, 4, 5], size=20, color="navy", alpha=0.5)
+tab1 = Panel(child=p1, title="circle")
+
+p2 = figure(plot_width=300, plot_height=300)
+p2.line([1, 2, 3, 4, 5], [6, 7, 2, 4, 5], line_width=3, color="navy", alpha=0.5)
+tab2 = Panel(child=p2, title="line")
+
+tabs = Tabs(tabs=[ tab1, tab2 ])
+
+html = file_html(tabs, CDN, "my plot")
+
+with open("./bokeh_interactive_plot.html", "w") as bokeh_file:
+    print(html, file=bokeh_file)
+
+"""
+.. raw:: html
+   :file: ./bokeh_interactive_plot.html
 """
 
 """
@@ -138,3 +172,15 @@ with open('pandas_html_view_decorated.html', 'w') as pandas_view:
    :file: ./pandas_html_view_decorated.html
 
 """
+
+"""
+Auto calling of PMN
+-------------------
+at the end of the script you can attach this couple of lines
+(using the name of your file and the correct location of pmn.py)
+to make sure that everytime you run the code anew, the html is updated
+in a single command.
+"""
+
+import subprocess
+subprocess.call(["python3.5", "../../pmn.py", "test_figures.py"])

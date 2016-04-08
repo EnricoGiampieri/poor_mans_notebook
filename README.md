@@ -10,6 +10,9 @@ WARNING - this script is extremely in the alpha stage! it shouldn't do any damag
 3. sun the script on your file. It will generate the rst, compile in html and open it with your default browser.
 4. enjoy!
 
+if you want to personalize the css style and keep it stable between runs of the program, do not modify the style.css (it gets rewritten everytime)
+but rather edit (create if there is none) a css file called `user.css`. This file is imported by default and it is after the base one, overwriting any configuration you want.
+
 ##Examples
 
 PMN applied to itself. The html contains all the info and effect, and rst, while not enabled to autofold the code, it's still quite usable. 

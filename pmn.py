@@ -153,6 +153,7 @@ html_doc = publish_parts(rst.encode('utf8'),
 css_head = """
 <head>
 <link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="user.css">
 </head>
 """
 
@@ -179,7 +180,7 @@ It doesn't look good, but the alternative is that losing the main one everything
 Also this means that the whole thing would become a one file script, that is always better!
 """
 
-CSS_data = """
+CSS_autohide_code = """
 label{
     background-color: #AAAFAB;
     border-radius: 5px;
@@ -229,6 +230,9 @@ input[type=checkbox]:checked + label:before {
   margin-left: -25px;*/
 }
 
+"""
+
+CSS_general_look = """
 /*
 :Authors: Ian Bicking, Michael Foord
 :Contact: fuzzyman@voidspace.org.uk
@@ -243,35 +247,13 @@ and ``html4css1.css`` revision 1.46.
 
 @import url(html4css1.css);
 
-body {
-  font-family: Arial, sans-serif;
-}
-
-em, i {
-  /* Typically serif fonts have much nicer italics */
-  font-family: Times New Roman, Times, serif;
-}
-
-a.target {
-  color: blue;
-}
-
-a.target {
-  color: blue;
-}
-
-a.toc-backref {
-  text-decoration: none;
-  color: black;
-}
-
-a.toc-backref:hover {
-  background-color: inherit;
-}
-
-a:hover {
-  background-color: #cccccc;
-}
+body { font-family: Arial, sans-serif; }
+em, i { font-family: Times New Roman, Times, serif; }
+a.target { color: blue; }
+a.target { color: blue; }
+a.toc-backref { text-decoration: none; color: black; }
+a.toc-backref:hover { background-color: inherit;}
+a:hover { background-color: #cccccc; }
 
 div.attention, div.caution, div.danger, div.error, div.hint,
 div.important, div.note, div.tip, div.warning {
@@ -314,25 +296,17 @@ h1 {
   border: medium solid black;
 }
 
-h1 a.toc-backref, h2 a.toc-backref {
-  color: #ffffff;
-}
-
+h1 a.toc-backref, h2 a.toc-backref { color: #ffffff; }
 h2 {
   background-color: #666666;
   color: #ffffff;
   border: medium solid black;
 }
 
-h3, h4, h5, h6 {
-  background-color: #cccccc;
-  color: #000000;
-}
+h3, h4, h5, h6 { background-color: #cccccc; color: #000000; }
 
 h3 a.toc-backref, h4 a.toc-backref, h5 a.toc-backref,
-h6 a.toc-backref {
-  color: #000000;
-}
+h6 a.toc-backref { color: #000000; }
 
 h1.title {
   text-align: center;
@@ -342,27 +316,15 @@ h1.title {
   -moz-border-radius: 20px;
 }
 
-table.footnote {
-  padding-left: 0.5ex;
-}
+table.footnote {  padding-left: 0.5ex;}
+table.citation { padding-left: 0.5ex }
+pre.literal-block, pre.doctest-block {border: thin black solid; padding: 5px;}
+.image img {border-style : solid; border-width : 2px;}
+h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {font-size: 100%;}
 
-table.citation {
-  padding-left: 0.5ex
-}
+"""
 
-pre.literal-block, pre.doctest-block {
-  border: thin black solid;
-  padding: 5px;
-}
-
-.image img { border-style : solid;
-            border-width : 2px;
-}
-
-h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
-  font-size: 100%;
-}
-
+CSS_code_highlight = """
 /* example stylesheet for Docutils */
 
 /* :Author:    Günter Milde */
@@ -415,6 +377,8 @@ h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
 .code .operator.word               { color: #AA22FF; font-weight: bold }
 
 """
+
+CSS_data = CSS_autohide_code + CSS_general_look + CSS_code_highlight
 
 with open("./style.css", "w") as css_file:
     print(CSS_data, file=css_file)
