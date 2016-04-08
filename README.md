@@ -14,13 +14,13 @@ WARNING - this script is extremely in the alpha stage! it shouldn't do any damag
 
 PMN applied to itself. The html contains all the info and effect, and rst, while not enabled to autofold the code, it's still quite usable. 
 
-* html version: https://cdn.rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/pmn_itself/pmn.html
+* html version: https://rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/pmn_itself/pmn.html
 * rst version: https://github.com/EnricoGiampieri/poor_mans_notebook/blob/master/examples/pmn_itself/pmn.rst
 
 A toy example of including files and image, bot png, svg and dynamic (using plot.ly).
 Due to limitation in the GitHub preview system, the svg and html are not rendered in the rst version, so check the html one
 
-* html version: https://cdn.rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/plotting_with_plotly/test_plotly.html
+* html version: https://rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/plotting_with_plotly/test_plotly.html
 
 The html is generated using http://rawgit.com/
 
@@ -71,12 +71,38 @@ The program have almost no moving parts, so basically no configuration is necess
 Working with standard instruments like rst, html and CSS meant that I could leverage all that power without trying to reinvent the wheel, and that is always a good thing.
 If you want to reconfigure how things look, you can just edit the css file and you're done, with as much detail of control as you want.
 
-## Why ReStructuredText Nnd Not MarkDown?
+## Question Time
+
+### Why ReStructuredText and not MarkDown?
 I love markdown, but I think that for this kind of projects the rst is the way to go for the following reasons:
 
 * scientific python (and python in general) already use rst for the documentation, and they are doing great with it. When possible, it's better to not deviate from the standards
 * Markdown is a very variable format, and there are 2'000 flavours of it. Rst is more standardized and will less variants, and this mean one less detail to take care about
 * RST comes with a lot of batteries included, like the possibility of code formatting, ordered and named references in the text and so on. Using it smartly could be easily used to write a full scientific paper.
+
+### Why you don't parse higher level docstring, such as for functions and classes?
+Several reasons:
+
+1. doing that woud require to either replicate the documentation, having it both in the code and the text
+2. would force the docstring to appear in the text. The two could have no relation, so it's better to separate them
+3. would force the docstring to be written in rst. As much as I think it should be a standard, I don't want to enforce that.
+4. It might render the code wrong if copied and pasted. I like the possibility of doing that.
+5. Would require much more hacking: the more the code, the more the moving parts, the greater the chances of something going wrong
+
+### How come I get Syntax Errors from my file even if I'm not running it?
+To process the source code the program uses the AST module, that means that it also performs a syntax check of your code.
+If PMN does not parse it python would not run it, so there is some problem there!
+
+### The CSS is hardcoded in the source code, that's bad practice!
+We agree, but this bad practice allow the program to be fuly self contained. This means that you can just drag and drop it in your folder and not worry about anything else. 
+You can add your own css in there and put all the configurations you want.
+
+I think that this is worth the price of a little bit of hard coding.
+
+### Your code is looks like shit and it's badly written!
+We agree.
+The first worry was to put out there a working prototype, style can come later.
+Any PR is welcome, if you feel like it.
 
 
 
