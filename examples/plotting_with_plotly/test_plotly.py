@@ -10,7 +10,7 @@ Created on Fri Apr  8 11:30:07 2016
 
 can be executed with::
 
-    !python3.5 pmn.py test_plotly.py
+    !python3.5 ../../pmn.py test_plotly.py
 
 
 Random Data in Text Format
@@ -85,3 +85,56 @@ plot(fig, filename='./my-graph.html', auto_open=False)
 
 """
 
+"""
+Pandas DataFrame Visualization
+------------------------------
+
+
+"""
+
+import pandas as pd
+data = pd.DataFrame(plt.randn(4, 4),
+                    index=['Italy', 'France', 'England', 'Spain'],
+                    columns=['Cats', 'Dogs', 'Rabbits', 'Giraffes'])
+
+with open('pandas_html_view.html', 'w') as pandas_view:
+    print(data.to_html(), file=pandas_view)
+
+"""
+.. raw:: html
+   :file: ./pandas_html_view.html
+
+We could also include ad-hoc decoration by including a piece of css in the html
+file that contains the pandas representation! (alonside all the possibilities
+given by the base function).
+
+by default the style will be applied to the whole file;
+if you want to apply a css only to a specif section, you can include the whole
+thing in a div with a specific name, and prefix all the rules of the css with
+the name of that div.
+
+"""
+
+with open('pandas_html_view_decorated.html', 'w') as pandas_view:
+    # taking the css from
+    # http://blog.henryhhammond.com/pandas-formatting-snippets/
+    print("""
+    <style>
+    <!--
+    .decoratedtable1 .dataframe * {border-color: #c0c0c0 !important;}
+    .decoratedtable1 .dataframe th{background: #eee;}
+    .decoratedtable1 .dataframe td{background: #fff;
+                                   text-align: right;
+                                   min-width:5em;}
+    -->
+    </style>
+    """, file=pandas_view)
+    print("<div class='decoratedtable1'>\n", file=pandas_view)
+    print(data.to_html(), file=pandas_view)
+    print("</div>\n", file=pandas_view)
+
+"""
+.. raw:: html
+   :file: ./pandas_html_view_decorated.html
+
+"""
