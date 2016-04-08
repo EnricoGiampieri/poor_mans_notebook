@@ -10,7 +10,7 @@ Created on Fri Apr  8 11:30:07 2016
 
 can be executed with::
 
-    !python3.5 pnm.py test_plotly.py
+    !python3.5 pmn.py test_plotly.py
 
 
 Random Data in Text Format
