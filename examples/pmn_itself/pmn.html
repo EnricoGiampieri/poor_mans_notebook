@@ -1,0 +1,443 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<meta name="author" content="Enrico Giampieri" />
+<meta name="date" content="2016/04/07" />
+<meta name="copyright" content="Python Software Foundation License (PSFL)" />
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<div class="document" id="the-poor-man-s-notebook">
+<h1 class="title">THE POOR MAN'S NOTEBOOK</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Enrico Giampieri</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:enrico.giampieri&#64;unibo.it">enrico.giampieri&#64;unibo.it</a></td></tr>
+<tr><th class="docinfo-name">Version:</th>
+<td>0.1</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2016/04/07</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>Python Software Foundation License (PSFL)</td></tr>
+</tbody>
+</table>
+<div class="section" id="introduction">
+<h1>Introduction</h1>
+<p>This software create an html version of a piece of code.
+It will note execute it, but only convert floating strings as rst.</p>
+<p>If you want to actually show something, save it to disk and include it!</p>
+<p>from the python zen:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; import this
+...
+explicit is better than implicit
+...
+</pre>
+<div class="danger">
+<p class="first admonition-title">!DANGER!</p>
+<img alt="https://openclipart.org/image/300px/svg_to_png/1157/ryanlerch-Other-Dangers-Sign.png" class="align-left" src="https://openclipart.org/image/300px/svg_to_png/1157/ryanlerch-Other-Dangers-Sign.png" style="width: 20%;" />
+<p class="last">This software is <strong>EXTREMELY</strong> in alpha state.
+Should not be able to do any damage, but BEWARE!</p>
+</div>
+</div>
+<div class="section" id="the-code">
+<h1>The Code</h1>
+<div class="section" id="imports">
+<h2>Imports</h2>
+<p><cite>tokenize</cite> and <cite>ast</cite> are used to correctly parse the python file.</p>
+<p><cite>docutils</cite> is used to convert the rst code to html.</p>
+<embed>
+<input type="checkbox" id="cb1"/><label for="cb1">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="keyword namespace">import</span> <span class="name namespace">tokenize</span>
+<span class="keyword namespace">import</span> <span class="name namespace">itertools</span> <span class="keyword namespace">as</span> <span class="name namespace">it</span>
+<span class="keyword namespace">import</span> <span class="name namespace">ast</span>
+<span class="keyword namespace">import</span> <span class="name namespace">sys</span>
+<span class="keyword namespace">import</span> <span class="name namespace">webbrowser</span>
+
+<span class="keyword namespace">from</span> <span class="name namespace">docutils.core</span> <span class="keyword namespace">import</span> <span class="name">publish_parts</span>
+</pre>
+</div>
+<div class="section" id="filename-and-parameters-detection">
+<h2>Filename and Parameters Detection</h2>
+<embed>
+<input type="checkbox" id="cb3"/><label for="cb3">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="keyword">if</span> <span class="name builtin">len</span><span class="punctuation">(</span><span class="name">sys</span><span class="operator">.</span><span class="name">argv</span><span class="punctuation">)</span> <span class="operator">&gt;</span> <span class="literal number integer">1</span><span class="punctuation">:</span>
+    <span class="name">myname</span> <span class="operator">=</span> <span class="name">sys</span><span class="operator">.</span><span class="name">argv</span><span class="punctuation">[</span><span class="literal number integer">1</span><span class="punctuation">]</span>
+<span class="keyword">else</span><span class="punctuation">:</span>
+    <span class="name">myname</span> <span class="operator">=</span> <span class="name">sys</span><span class="operator">.</span><span class="name">argv</span><span class="punctuation">[</span><span class="literal number integer">0</span><span class="punctuation">]</span>
+</pre>
+</div>
+<div class="section" id="first-crunching">
+<h2>First Crunching</h2>
+<p><cite>is_info_string</cite> test if a given token produced by the tokenizer is a good
+text string. To be, it must be not only a string, but also start at the
+beginning of the line.</p>
+<embed>
+<input type="checkbox" id="cb5"/><label for="cb5">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="keyword">def</span> <span class="name function">is_info_string</span><span class="punctuation">(</span><span class="name">token</span><span class="punctuation">):</span>
+    <span class="keyword">return</span> <span class="name">token</span><span class="operator">.</span><span class="name">type</span> <span class="operator">==</span> <span class="name">tokenize</span><span class="operator">.</span><span class="name">STRING</span> <span class="operator word">and</span> <span class="name">token</span><span class="operator">.</span><span class="name">start</span><span class="punctuation">[</span><span class="literal number integer">1</span><span class="punctuation">]</span> <span class="operator">==</span> <span class="literal number integer">0</span>
+
+
+<span class="keyword">with</span> <span class="name builtin">open</span><span class="punctuation">(</span><span class="name">myname</span><span class="punctuation">,</span> <span class="literal string single">'rb'</span><span class="punctuation">)</span> <span class="keyword">as</span> <span class="name">myfile</span><span class="punctuation">:</span>
+    <span class="name">tokens</span> <span class="operator">=</span> <span class="name builtin">list</span><span class="punctuation">(</span><span class="name">tokenize</span><span class="operator">.</span><span class="name">tokenize</span><span class="punctuation">(</span><span class="name">myfile</span><span class="operator">.</span><span class="name">readline</span><span class="punctuation">))</span>
+    <span class="name">comment_tokens</span> <span class="operator">=</span> <span class="punctuation">[</span><span class="name">token</span> <span class="keyword">for</span> <span class="name">token</span> <span class="operator word">in</span> <span class="name">tokens</span> <span class="keyword">if</span> <span class="name">is_info_string</span><span class="punctuation">(</span><span class="name">token</span><span class="punctuation">)]</span>
+    <span class="name">comment_position</span> <span class="operator">=</span> <span class="punctuation">[(</span><span class="name">t</span><span class="operator">.</span><span class="name">start</span><span class="punctuation">[</span><span class="literal number integer">0</span><span class="punctuation">]</span><span class="operator">-</span><span class="literal number integer">1</span><span class="punctuation">,</span> <span class="name">t</span><span class="operator">.</span><span class="name">end</span><span class="punctuation">[</span><span class="literal number integer">0</span><span class="punctuation">])</span> <span class="keyword">for</span> <span class="name">t</span> <span class="operator word">in</span> <span class="name">comment_tokens</span><span class="punctuation">]</span>
+</pre>
+</div>
+<div class="section" id="second-crunching">
+<h2>Second Crunching</h2>
+<p><cite>inside_comment_line</cite> check that the given lineindex is inside the range
+of the found comment by the <cite>is_info_string</cite> function.</p>
+<embed>
+<input type="checkbox" id="cb7"/><label for="cb7">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="keyword">def</span> <span class="name function">inside_comment_line</span><span class="punctuation">(</span><span class="name">line_info</span><span class="punctuation">):</span>
+    <span class="name">line_idx</span><span class="punctuation">,</span> <span class="name">line</span> <span class="operator">=</span> <span class="name">line_info</span>
+    <span class="keyword">for</span> <span class="name">bottom</span><span class="punctuation">,</span> <span class="name">top</span> <span class="operator word">in</span> <span class="name">comment_position</span><span class="punctuation">:</span>
+        <span class="keyword">if</span> <span class="name">bottom</span> <span class="operator">&lt;=</span> <span class="name">line_idx</span> <span class="operator">&lt;</span> <span class="name">top</span><span class="punctuation">:</span>
+            <span class="keyword">return</span> <span class="name builtin pseudo">True</span>
+    <span class="keyword">return</span> <span class="name builtin pseudo">False</span>
+
+<span class="keyword">with</span> <span class="name builtin">open</span><span class="punctuation">(</span><span class="name">myname</span><span class="punctuation">,</span> <span class="literal string single">'r'</span><span class="punctuation">)</span> <span class="keyword">as</span> <span class="name">myfile</span><span class="punctuation">:</span>
+    <span class="name">divide_file</span> <span class="operator">=</span> <span class="name">it</span><span class="operator">.</span><span class="name">groupby</span><span class="punctuation">(</span><span class="name builtin">enumerate</span><span class="punctuation">(</span><span class="name">myfile</span><span class="operator">.</span><span class="name">readlines</span><span class="punctuation">()),</span>
+                             <span class="name">inside_comment_line</span><span class="punctuation">)</span>
+    <span class="name">divide_file</span> <span class="operator">=</span> <span class="punctuation">[(</span><span class="name">truth</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="name">l</span><span class="punctuation">[</span><span class="literal number integer">1</span><span class="punctuation">]</span> <span class="keyword">for</span> <span class="name">l</span> <span class="operator word">in</span> <span class="name">lines</span><span class="punctuation">])</span>
+                   <span class="keyword">for</span> <span class="name">truth</span><span class="punctuation">,</span> <span class="name">lines</span> <span class="operator word">in</span> <span class="name">divide_file</span><span class="punctuation">]</span>
+</pre>
+</div>
+<div class="section" id="transformation-to-rst">
+<h2>Transformation to RST</h2>
+<embed>
+<input type="checkbox" id="cb9"/><label for="cb9">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="name">link_head</span> <span class="operator">=</span> <span class="literal string double">&quot;&quot;&quot;
+
+.. raw:: html
+
+    &lt;embed&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;cb{0}&quot;/&gt;&lt;label for=&quot;cb{0}&quot;&gt;Show Code&lt;/label&gt;
+    &lt;/embed&gt;
+
+&quot;&quot;&quot;</span>
+
+<span class="name">result_lines</span> <span class="operator">=</span> <span class="punctuation">[]</span>
+
+<span class="keyword">for</span> <span class="name">block_num</span><span class="punctuation">,</span> <span class="punctuation">(</span><span class="name">truth</span><span class="punctuation">,</span> <span class="name">lines</span><span class="punctuation">)</span> <span class="operator word">in</span> <span class="name builtin">enumerate</span><span class="punctuation">(</span><span class="name">divide_file</span><span class="punctuation">):</span>
+    <span class="keyword">if</span> <span class="operator word">not</span> <span class="name">truth</span><span class="punctuation">:</span>
+        <span class="name">lines</span> <span class="operator">=</span> <span class="name builtin">str</span><span class="operator">.</span><span class="name">join</span><span class="punctuation">(</span><span class="literal string double">&quot;</span><span class="literal string escape">\n</span><span class="literal string double">&quot;</span><span class="punctuation">,</span> <span class="punctuation">(</span><span class="literal string single">'   '</span><span class="operator">+</span><span class="name">line</span><span class="operator">.</span><span class="name">rstrip</span><span class="punctuation">()</span> <span class="keyword">for</span> <span class="name">line</span> <span class="operator word">in</span> <span class="name">lines</span><span class="punctuation">))</span>
+        <span class="comment single"># this is necessary to avoid problems with white lines</span>
+        <span class="comment single"># at the end of the file or in the middle of nothign</span>
+        <span class="name">lines_test</span> <span class="operator">=</span> <span class="name">lines</span><span class="operator">.</span><span class="name">rstrip</span><span class="punctuation">()</span><span class="operator">.</span><span class="name">strip</span><span class="punctuation">()</span>
+        <span class="keyword">if</span> <span class="name">lines_test</span><span class="punctuation">:</span>
+            <span class="name">lines</span> <span class="operator">=</span> <span class="name">link_head</span><span class="operator">.</span><span class="name">format</span><span class="punctuation">(</span><span class="name">block_num</span><span class="punctuation">)</span><span class="operator">+</span><span class="literal string double">&quot;.. code:: python</span><span class="literal string escape">\n\n</span><span class="literal string double">&quot;</span><span class="operator">+</span><span class="name">lines</span>
+        <span class="keyword">else</span><span class="punctuation">:</span>
+            <span class="name">lines</span> <span class="operator">=</span> <span class="literal string single">'</span><span class="literal string escape">\n\n</span><span class="literal string single">'</span>
+
+    <span class="keyword">else</span><span class="punctuation">:</span>
+        <span class="name">lines</span> <span class="operator">=</span> <span class="name builtin">str</span><span class="operator">.</span><span class="name">join</span><span class="punctuation">(</span><span class="literal string double">&quot;&quot;</span><span class="punctuation">,</span> <span class="name">lines</span><span class="punctuation">)</span>
+        <span class="name">tree</span> <span class="operator">=</span> <span class="name">tree</span> <span class="operator">=</span> <span class="name">ast</span><span class="operator">.</span><span class="name">parse</span><span class="punctuation">(</span><span class="name">lines</span><span class="punctuation">)</span>
+        <span class="name">nodes_str</span> <span class="operator">=</span> <span class="punctuation">[</span><span class="name">node</span><span class="operator">.</span><span class="name">s</span> <span class="keyword">for</span> <span class="name">node</span> <span class="operator word">in</span> <span class="name">ast</span><span class="operator">.</span><span class="name">walk</span><span class="punctuation">(</span><span class="name">tree</span><span class="punctuation">)</span> <span class="keyword">if</span> <span class="name builtin">isinstance</span><span class="punctuation">(</span><span class="name">node</span><span class="punctuation">,</span> <span class="name">ast</span><span class="operator">.</span><span class="name">Str</span><span class="punctuation">)]</span>
+        <span class="name">lines</span> <span class="operator">=</span> <span class="name builtin">str</span><span class="operator">.</span><span class="name">join</span><span class="punctuation">(</span><span class="literal string double">&quot;&quot;</span><span class="punctuation">,</span> <span class="name">nodes_str</span><span class="punctuation">)</span>
+    <span class="name">result_lines</span><span class="operator">.</span><span class="name">append</span><span class="punctuation">(</span><span class="name">lines</span><span class="punctuation">)</span>
+</pre>
+</div>
+<div class="section" id="creation-of-the-rst-and-html-files">
+<h2>Creation of The RST and HTML Files</h2>
+<embed>
+<input type="checkbox" id="cb11"/><label for="cb11">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="name">rst</span> <span class="operator">=</span> <span class="name builtin">str</span><span class="operator">.</span><span class="name">join</span><span class="punctuation">(</span><span class="literal string double">&quot;</span><span class="literal string escape">\n</span><span class="literal string double">&quot;</span><span class="punctuation">,</span> <span class="name">result_lines</span><span class="punctuation">)</span>
+<span class="name">html_doc</span> <span class="operator">=</span> <span class="name">publish_parts</span><span class="punctuation">(</span><span class="name">rst</span><span class="operator">.</span><span class="name">encode</span><span class="punctuation">(</span><span class="literal string single">'utf8'</span><span class="punctuation">),</span>
+                         <span class="name">writer_name</span><span class="operator">=</span><span class="literal string single">'html'</span><span class="punctuation">,</span>
+                         <span class="name">settings_overrides</span><span class="operator">=</span><span class="punctuation">{</span><span class="literal string single">'input_encoding'</span><span class="punctuation">:</span> <span class="literal string single">'utf8'</span><span class="punctuation">})</span>
+
+<span class="name">css_head</span> <span class="operator">=</span> <span class="literal string double">&quot;&quot;&quot;
+&lt;head&gt;
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&quot;&quot;&quot;</span>
+
+<span class="name">html</span> <span class="operator">=</span> <span class="name">html_doc</span><span class="punctuation">[</span><span class="literal string single">'meta'</span><span class="punctuation">]</span> <span class="operator">+</span> <span class="name">css_head</span> <span class="operator">+</span> <span class="name">html_doc</span><span class="punctuation">[</span><span class="literal string single">'html_body'</span><span class="punctuation">]</span>
+</pre>
+</div>
+<div class="section" id="printing-them-out">
+<h2>Printing Them Out</h2>
+<embed>
+<input type="checkbox" id="cb13"/><label for="cb13">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="name">html_file</span> <span class="operator">=</span> <span class="name">myname</span><span class="operator">.</span><span class="name">replace</span><span class="punctuation">(</span><span class="literal string single">'.py'</span><span class="punctuation">,</span> <span class="literal string single">'.html'</span><span class="punctuation">)</span>
+
+<span class="keyword">with</span> <span class="name builtin">open</span><span class="punctuation">(</span><span class="name">myname</span><span class="operator">.</span><span class="name">replace</span><span class="punctuation">(</span><span class="literal string single">'.py'</span><span class="punctuation">,</span> <span class="literal string single">'.rst'</span><span class="punctuation">),</span> <span class="literal string single">'w'</span><span class="punctuation">)</span> <span class="keyword">as</span> <span class="name">outfile</span><span class="punctuation">:</span>
+    <span class="name">outfile</span><span class="operator">.</span><span class="name">write</span><span class="punctuation">(</span><span class="name">rst</span><span class="punctuation">)</span>
+
+<span class="keyword">with</span> <span class="name builtin">open</span><span class="punctuation">(</span><span class="name">html_file</span><span class="punctuation">,</span> <span class="literal string single">'w'</span><span class="punctuation">)</span> <span class="keyword">as</span> <span class="name">outfile</span><span class="punctuation">:</span>
+    <span class="name">outfile</span><span class="operator">.</span><span class="name">write</span><span class="punctuation">(</span><span class="name">html</span><span class="punctuation">)</span>
+</pre>
+</div>
+<div class="section" id="creating-the-css-file">
+<h2>Creating the CSS file</h2>
+<p>to reduce the number of files necessary to be around, I will create the css style sheet from here.
+It doesn't look good, but the alternative is that losing the main one everything looks horrible.
+Also this means that the whole thing would become a one file script, that is always better!</p>
+<embed>
+<input type="checkbox" id="cb15"/><label for="cb15">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="name">CSS_data</span> <span class="operator">=</span> <span class="literal string double">&quot;&quot;&quot;
+label{
+    background-color: #AAAFAB;
+    border-radius: 5px;
+    padding: 3px;
+    padding-left: 25px;
+    color: white;
+}
+
+input[type=checkbox] { display: none; }
+input[type=checkbox] ~ .code {
+    max-height: 0;
+    max-width: 0;
+    opacity: 0;
+   -webkit-transition:all 1s ease;
+   -moz-transition:all 1s ease;
+   -o-transition:all 1s ease;
+   transition:all 1s ease;
+
+}
+input[type=checkbox]:checked ~ .code {
+    max-height: 100%;
+    max-width: 100%;
+    opacity: 1;
+}
+input[type=checkbox] + label:before{
+    transform-origin:25</span><span class="literal string interpol">% 50%</span><span class="literal string double">;
+  border: 8px solid transparent;
+  border-width: 8px 12px;
+  border-left-color: white;
+  margin-left: -20px;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    text-align: center;
+    content: '';
+    color: #AAAFAB;
+   -webkit-transition:all .5s ease;
+   -moz-transition:all .5s ease;
+   -o-transition:all .5s ease;
+   transition:all .5s ease;
+    position: absolute;
+    margin-top: 1px;
+}
+input[type=checkbox]:checked + label:before {
+    transform: rotate(90deg);
+    /*margin-top: 6px;
+  margin-left: -25px;*/
+}
+
+/*
+:Authors: Ian Bicking, Michael Foord
+:Contact: fuzzyman&#64;voidspace.org.uk
+:Date: 2005/08/26
+:Version: 0.1.0
+:Copyright: This stylesheet has been placed in the public domain.
+
+Stylesheet for Docutils.
+Based on ``blue_box.css`` by Ian Bicking
+and ``html4css1.css`` revision 1.46.
+*/
+
+&#64;import url(html4css1.css);
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+em, i {
+  /* Typically serif fonts have much nicer italics */
+  font-family: Times New Roman, Times, serif;
+}
+
+a.target {
+  color: blue;
+}
+
+a.target {
+  color: blue;
+}
+
+a.toc-backref {
+  text-decoration: none;
+  color: black;
+}
+
+a.toc-backref:hover {
+  background-color: inherit;
+}
+
+a:hover {
+  background-color: #cccccc;
+}
+
+div.attention, div.caution, div.danger, div.error, div.hint,
+div.important, div.note, div.tip, div.warning {
+  background-color: #cccccc;
+  padding: 3px;
+  width: 80%;
+}
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title  {
+  text-align: center;
+  background-color: #999999;
+  display: block;
+  margin: 0;
+}
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: #cc0000;
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #999999;
+  display: block;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Helvetica, Arial, sans-serif;
+  border: thin solid black;
+  /* This makes the borders rounded on Mozilla, which pleases me */
+  -moz-border-radius: 8px;
+  padding: 4px;
+}
+
+h1 {
+  background-color: #444499;
+  color: #ffffff;
+  border: medium solid black;
+}
+
+h1 a.toc-backref, h2 a.toc-backref {
+  color: #ffffff;
+}
+
+h2 {
+  background-color: #666666;
+  color: #ffffff;
+  border: medium solid black;
+}
+
+h3, h4, h5, h6 {
+  background-color: #cccccc;
+  color: #000000;
+}
+
+h3 a.toc-backref, h4 a.toc-backref, h5 a.toc-backref,
+h6 a.toc-backref {
+  color: #000000;
+}
+
+h1.title {
+  text-align: center;
+  background-color: #444499;
+  color: #eeeeee;
+  border: thick solid black;
+  -moz-border-radius: 20px;
+}
+
+table.footnote {
+  padding-left: 0.5ex;
+}
+
+table.citation {
+  padding-left: 0.5ex
+}
+
+pre.literal-block, pre.doctest-block {
+  border: thin black solid;
+  padding: 5px;
+}
+
+.image img { border-style : solid;
+            border-width : 2px;
+}
+
+h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
+  font-size: 100%;
+}
+
+/* example stylesheet for Docutils */
+
+/* :Author:    Günter Milde */
+/* :Copyright: © 2012 G. Milde */
+/* :License:   This stylesheet is placed in the public domain. */
+
+/* Syntax highlight rules for HTML documents generated with Docutils */
+/* using the ``--syntax-highlight=long`` option (new in v. 0.9). */
+
+/* This stylesheet implements Pygment's &quot;default&quot; style with less rules than */
+/* pygments-default using class hierarchies.                                 */
+/* Use it as example for &quot;handcrafted&quot; styles with only few rules.      */
+
+.code                              { background: #f8f8f8; }
+.code .comment                     { color: #008800; font-style: italic }
+.code .error                       { border: 1px solid #FF0000 }
+.code .generic.deleted             { color: #A00000 }
+.code .generic.emph                { font-style: italic }
+.code .generic.error               { color: #FF0000 }
+.code .generic.heading             { color: #000080; font-weight: bold }
+.code .generic.inserted            { color: #00A000 }
+.code .generic.output              { color: #808080 }
+.code .generic.prompt              { color: #000080; font-weight: bold }
+.code .generic.strong              { font-weight: bold }
+.code .generic.subheading          { color: #800080; font-weight: bold }
+.code .generic.traceback           { color: #0040D0 }
+.code .keyword                     { color: #AA22FF; font-weight: bold }
+.code .keyword.pseudo              { font-weight: normal }
+.code .literal.number              { color: #666666 }
+.code .literal.string              { color: #BB4444 }
+.code .literal.string.doc          { color: #BB4444; font-style: italic }
+.code .literal.string.escape       { color: #BB6622; font-weight: bold }
+.code .literal.string.interpol     { color: #BB6688; font-weight: bold }
+.code .literal.string.other        { color: #008000 }
+.code .literal.string.regex        { color: #BB6688 }
+.code .literal.string.symbol       { color: #B8860B }
+.code .name.attribute              { color: #BB4444 }
+.code .name.builtin                { color: #AA22FF }
+.code .name.class                  { color: #0000FF }
+.code .name.constant               { color: #880000 }
+.code .name.decorator              { color: #AA22FF }
+.code .name.entity                 { color: #999999; font-weight: bold }
+.code .name.exception              { color: #D2413A; font-weight: bold }
+.code .name.function               { color: #00A000 }
+.code .name.label                  { color: #A0A000 }
+.code .name.namespace              { color: #0000FF; font-weight: bold }
+.code .name.tag                    { color: #008000; font-weight: bold }
+.code .name.variable               { color: #B8860B }
+.code .operator                    { color: #666666 }
+.code .operator.word               { color: #AA22FF; font-weight: bold }
+
+&quot;&quot;&quot;</span>
+
+<span class="keyword">with</span> <span class="name builtin">open</span><span class="punctuation">(</span><span class="literal string double">&quot;./style.css&quot;</span><span class="punctuation">,</span> <span class="literal string double">&quot;w&quot;</span><span class="punctuation">)</span> <span class="keyword">as</span> <span class="name">css_file</span><span class="punctuation">:</span>
+    <span class="keyword">print</span><span class="punctuation">(</span><span class="name">CSS_data</span><span class="punctuation">,</span> <span class="name builtin">file</span><span class="operator">=</span><span class="name">css_file</span><span class="punctuation">)</span>
+</pre>
+</div>
+<div class="section" id="opening-in-the-browser">
+<h2>Opening In The Browser</h2>
+<p>Why press two buttons when you can get around with a single one?</p>
+<embed>
+<input type="checkbox" id="cb17"/><label for="cb17">Show Code</label>
+</embed><pre class="code python literal-block">
+<span class="name">webbrowser</span><span class="operator">.</span><span class="name">open_new_tab</span><span class="punctuation">(</span><span class="name">html_file</span><span class="punctuation">)</span>
+</pre>
+</div>
+</div>
+</div>
