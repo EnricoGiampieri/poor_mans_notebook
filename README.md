@@ -5,7 +5,7 @@ WARNING - this script is extremely in the alpha stage! it shouldn't do any damag
 
 ## Usage
 
-1. copy the script and the css file in the directory where you plan to use it.
+1. copy the script in the directory where you plan to use it.
 2. run your program as usual (it should save figures and other material on disk)
 3. sun the script on your file. It will generate the rst, compile in html and open it with your default browser.
 4. enjoy!
