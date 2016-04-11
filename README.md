@@ -74,6 +74,25 @@ The program have almost no moving parts, so basically no configuration is necess
 Working with standard instruments like rst, html and CSS meant that I could leverage all that power without trying to reinvent the wheel, and that is always a good thing.
 If you want to reconfigure how things look, you can just edit the css file and you're done, with as much detail of control as you want.
 
+## Related Libraries
+
+Due to its static way of working, PMN works very well with some other library for data analysis.
+Combining them together could lead to excellent results, so I strongly suggest to take a look at them!
+
+### [Sumatra](http://pythonhosted.org/Sumatra/)
+[Sumatra](http://pythonhosted.org/Sumatra/) works on top of a version control system, and keeps automatically tracks of all the results (stored as file) as a function of the input and code of your program.
+It is foundamental to keep a virtual notebook with the results of all your simulations, so it will not be a mistery anymore how those results were obtained two years ago.
+
+### [Ruffus](http://www.ruffus.org.uk/) & [Luigi](http://luigi.readthedocs.org/en/stable/)
+
+Both these libraries manage the workflow pipeline, connecting one piece of code to the other by the creation and update of intermediate files, with a principle similar to the old time `make`.
+They both manage pipeline interruption quite easily, but they work on different scales: [Ruffus](http://www.ruffus.org.uk/) is quite quick and easy to set up, while [Luigi](http://luigi.readthedocs.org/en/stable/) requires more boilercode, but it does offer a very comfortable web interface to manage the progression of the pipeline, both locally and remotely, making big batch job like bioinformatic processing as easy as possible.
+
+### [Bokeh](http://bokeh.pydata.org/en/latest/)
+
+This plotting library works very well, and is easy to make play nicely with the old-timey matplotlib.
+The interesting advantage is that it is able to save the plot as an html file, that contains the whole visualized dataset and the code to interact with it, allowing to export good looking and interactive visualization with your poor man's notebook.
+
 ## Question Time
 
 ### Why ReStructuredText and not MarkDown?
