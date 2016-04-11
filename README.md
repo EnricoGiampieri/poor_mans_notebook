@@ -20,11 +20,11 @@ PMN applied to itself. The html contains all the info and effect, and rst, while
 * html version: https://rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/pmn_itself/pmn.html
 * rst version: https://github.com/EnricoGiampieri/poor_mans_notebook/blob/master/examples/pmn_itself/pmn.rst
 
-A toy example of including files and image, bot png, svg and dynamic (using plot.ly).
+A toy example of including files and image, bot png, svg and dynamic (using bokeh).
 Due to limitation in the GitHub preview system, the svg and html are not rendered in the rst version, so check the html one
 
-* html version: https://rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/plotting_with_plotly/test_plotly.html
-
+* html version: https://rawgit.com/EnricoGiampieri/poor_mans_notebook/master/examples/display_random_objects/test_figures.html
+* 
 The html is generated using http://rawgit.com/
 
 ## Rationale
