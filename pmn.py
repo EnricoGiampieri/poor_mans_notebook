@@ -191,19 +191,21 @@ label{
 
 input[type=checkbox] { display: none; }
 input[type=checkbox] + label + .code {
-    max-height: 0;
-    max-width: 0;
+    max-height: 0%;
+    max-width: 0%;
     opacity: 0;
    -webkit-transition:all 1s ease;
    -moz-transition:all 1s ease;
    -o-transition:all 1s ease;
    transition:all 1s ease;
+   display: none;
 
 }
 input[type=checkbox]:checked + label +  .code {
     max-height: 100%;
     max-width: 100%;
     opacity: 1;
+    display: block;
 }
 input[type=checkbox] + label:before{
     transform-origin:25% 50%;
