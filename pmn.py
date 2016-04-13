@@ -113,7 +113,7 @@ link_head = """
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb{0}"/><label for="cb{0}">Show Code</label>
     </embed>
 
@@ -148,10 +148,14 @@ Creation of The RST and HTML Files
 rst = str.join("\n", result_lines)
 html_doc = publish_parts(rst.encode('utf8'),
                          writer_name='html',
-                         settings_overrides={'input_encoding': 'utf8'})
+                         settings_overrides={'input_encoding': 'utf8',
+                                             'math_output': 'MathML'}) #'MathJax', 'HTML'
 
 css_head = """
 <head>
+
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" type="text/css" href="user.css">
 </head>
@@ -249,7 +253,7 @@ and ``html4css1.css`` revision 1.46.
 
 @import url(html4css1.css);
 
-body { font-family: Arial, sans-serif; }
+body { font-family: Arial, sans-serif; width: 800px;}
 em, i { font-family: Times New Roman, Times, serif; }
 a.target { color: blue; }
 a.target { color: blue; }
