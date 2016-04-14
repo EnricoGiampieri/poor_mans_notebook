@@ -20,7 +20,7 @@ Random Data in Text Format
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb1"/><label for="cb1">Show Code</label>
     </embed>
 
@@ -43,7 +43,7 @@ Matplotlib
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb3"/><label for="cb3">Show Code</label>
     </embed>
 
@@ -79,7 +79,7 @@ permette di esportare la figura direttamente come html.
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb7"/><label for="cb7">Show Code</label>
     </embed>
 
@@ -89,13 +89,14 @@ permette di esportare la figura direttamente come html.
    from bokeh.plotting import figure
    from bokeh.resources import CDN
    from bokeh.embed import file_html
+   from bokeh.embed import components
    
    plot = figure()
    x = [1, 2, 3, 4, 5]
    y = [6, 7, 2, 4, 5]
    plot.line(x, y, legend="Temp.", line_width=2)
    
-   html = file_html(plot, CDN, "my plot")
+   html = file_html(plot, INLINE)
    
    with open("./bokeh_plot.html", "w") as bokeh_file:
        print(html, file=bokeh_file)
@@ -115,7 +116,7 @@ saving it then to an html file
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb9"/><label for="cb9">Show Code</label>
     </embed>
 
@@ -127,18 +128,21 @@ saving it then to an html file
    
    with open("./bokeh_matplotlib_plot.html", "w") as bokeh_file:
        bokeh_fig = to_bokeh(plt_fig)
-       html = file_html(bokeh_fig, CDN, "my plot")
+       html = file_html(bokeh_fig, CDN)
        print(html, file=bokeh_file)
    
 
 .. raw:: html
    :file: ./bokeh_matplotlib_plot.html
 
+---------------------
+
+
 
 
 .. raw:: html
 
-    <embed>
+    <br><embed>
     <input type="checkbox" id="cb11"/><label for="cb11">Show Code</label>
     </embed>
 
@@ -146,7 +150,6 @@ saving it then to an html file
 
    
    from bokeh.models.widgets import Panel, Tabs
-   from bokeh.io import output_file, show
    from bokeh.plotting import figure
    
    
@@ -160,14 +163,91 @@ saving it then to an html file
    
    tabs = Tabs(tabs=[ tab1, tab2 ])
    
-   html = file_html(tabs, CDN, "my plot")
-   
    with open("./bokeh_interactive_plot.html", "w") as bokeh_file:
+       html = file_html(tabs, CDN)
        print(html, file=bokeh_file)
    
+   
+
 
 .. raw:: html
    :file: ./bokeh_interactive_plot.html
+
+
+------------------------------------
+
+.. warning::
+
+    In case multiple bokehinteractive graphs should be included in the same notebook,
+    there could be problems, as each one of them try to import the javascript
+    again and this lead to only the last one being shown.
+    To avoid this problem you need to insert the following one without the external
+    machinery used my `file_html`, using `components` instead.
+    The line is slightly different, but there is no code overhead in doing that.
+
+    The other downside of bokeh is that the code will require a working internet
+    connection, unless the bokeh javascript is statically downloaded and linked.
+
+..
+
+
+
+
+
+.. raw:: html
+
+    <br><embed>
+    <input type="checkbox" id="cb13"/><label for="cb13">Show Code</label>
+    </embed>
+
+.. code:: python
+
+   
+   from bokeh.models import ColumnDataSource
+   from bokeh.plotting import gridplot
+   
+   x = list(range(-20, 21))
+   y0 = [abs(xx) for xx in x]
+   y1 = [xx**2 for xx in x]
+   
+   # create a column data source for the plots to share
+   source = ColumnDataSource(data=dict(x=x, y0=y0, y1=y1))
+   
+   TOOLS = "box_select,lasso_select,help"
+   
+   # create a new plot and add a renderer
+   left = figure(tools=TOOLS, width=300, height=300)
+   left.circle('x', 'y0', source=source)
+   
+   # create another new plot and add a renderer
+   right = figure(tools=TOOLS, width=300, height=300)
+   right.circle('x', 'y1', source=source)
+   
+   linked_plot = gridplot([[left, right]])
+   
+
+..
+
+
+
+.. raw:: html
+
+    <br><embed>
+    <input type="checkbox" id="cb15"/><label for="cb15">Show Code</label>
+    </embed>
+
+.. code:: python
+
+   
+   with open("./bokeh_interactive_plot_linked.html", "w") as bokeh_file:
+       script, div = components(linked_plot)
+       print(script, div, file=bokeh_file)
+   
+
+
+.. raw:: html
+   :file: ./bokeh_interactive_plot_linked.html
+
 
 
 
@@ -182,8 +262,8 @@ Pandas DataFrame Visualization
 
 .. raw:: html
 
-    <embed>
-    <input type="checkbox" id="cb15"/><label for="cb15">Show Code</label>
+    <br><embed>
+    <input type="checkbox" id="cb19"/><label for="cb19">Show Code</label>
     </embed>
 
 .. code:: python
@@ -215,8 +295,8 @@ the name of that div.
 
 .. raw:: html
 
-    <embed>
-    <input type="checkbox" id="cb17"/><label for="cb17">Show Code</label>
+    <br><embed>
+    <input type="checkbox" id="cb21"/><label for="cb21">Show Code</label>
     </embed>
 
 .. code:: python
@@ -260,8 +340,8 @@ in a single command.
 
 .. raw:: html
 
-    <embed>
-    <input type="checkbox" id="cb21"/><label for="cb21">Show Code</label>
+    <br><embed>
+    <input type="checkbox" id="cb25"/><label for="cb25">Show Code</label>
     </embed>
 
 .. code:: python

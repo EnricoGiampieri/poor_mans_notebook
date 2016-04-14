@@ -8,27 +8,29 @@ label{
 }
 
 input[type=checkbox] { display: none; }
-input[type=checkbox] ~ .code {
-    max-height: 0;
-    max-width: 0;
+input[type=checkbox] + label + .code {
+    max-height: 0%;
+    max-width: 0%;
     opacity: 0;
    -webkit-transition:all 1s ease;
    -moz-transition:all 1s ease;
    -o-transition:all 1s ease;
    transition:all 1s ease;
+   display: none;
 
 }
-input[type=checkbox]:checked ~ .code {
+input[type=checkbox]:checked + label +  .code {
     max-height: 100%;
     max-width: 100%;
     opacity: 1;
+    display: block;
 }
 input[type=checkbox] + label:before{
     transform-origin:25% 50%;
-  border: 8px solid transparent;
-  border-width: 8px 12px;
-  border-left-color: white;
-  margin-left: -20px;
+    border: 8px solid transparent;
+    border-width: 8px 12px;
+    border-left-color: white;
+    margin-left: -20px;
     width: 0;
     height: 0;
     display: inline-block;
@@ -38,14 +40,14 @@ input[type=checkbox] + label:before{
    -webkit-transition:all .5s ease;
    -moz-transition:all .5s ease;
    -o-transition:all .5s ease;
-   transition:all .5s ease;
+    transition:all .5s ease;
     position: absolute;
     margin-top: 1px;
 }
 input[type=checkbox]:checked + label:before {
     transform: rotate(90deg);
     /*margin-top: 6px;
-  margin-left: -25px;*/
+    margin-left: -25px;*/
 }
 
 
@@ -63,7 +65,7 @@ and ``html4css1.css`` revision 1.46.
 
 @import url(html4css1.css);
 
-body { font-family: Arial, sans-serif; }
+body { font-family: Arial, sans-serif; width: 800px;}
 em, i { font-family: Times New Roman, Times, serif; }
 a.target { color: blue; }
 a.target { color: blue; }
